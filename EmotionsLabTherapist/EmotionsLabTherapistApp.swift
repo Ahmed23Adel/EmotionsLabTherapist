@@ -9,6 +9,9 @@ import SwiftUI
 
 @main
 struct EmotionsLabTherapistApp: App {
+    init(){
+        AppResetDetector.clearKeychainIfFirstLaunch()
+    }
     var body: some Scene {
         WindowGroup {
             ContentView()

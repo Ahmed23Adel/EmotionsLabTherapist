@@ -46,5 +46,11 @@ class KeychainHelper {
 
         SecItemDelete(query)
     }
+    
+    func clearAll() {
+        let query = [kSecClass: kSecClassGenericPassword] as CFDictionary
+        SecItemDelete(query)
+    }
+
 }
 
