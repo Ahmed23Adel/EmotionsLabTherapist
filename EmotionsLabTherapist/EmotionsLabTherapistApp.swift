@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct EmotionsLabTherapistApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     init(){
         AppResetDetector.clearKeychainIfFirstLaunch()
     }
