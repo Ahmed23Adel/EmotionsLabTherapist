@@ -7,7 +7,8 @@
 
 import Foundation
 
-class AppResetDetector{
+struct AppResetDetector{
+    private init() {}
     static let hasLaunchedBeforeKey = "hasLaunchedBefore"
     
     static func clearKeychainIfFirstLaunch(){
@@ -16,6 +17,7 @@ class AppResetDetector{
             UserDefaults.standard.set(true, forKey: hasLaunchedBeforeKey)
             UserDefaults.standard.synchronize()
             KeychainHelper.shared.clearAll()
+            print("clearKeychainIfFirstLaunch Done")
         }
     }
 }

@@ -6,3 +6,8 @@
 //
 
 import Foundation
+enum ApiCallerErrors: Error{
+    case invalidEndpoint
+    case serializationError
+    
+}

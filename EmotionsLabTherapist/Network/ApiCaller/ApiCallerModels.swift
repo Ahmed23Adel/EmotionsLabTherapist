@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct ApiCallingErrorDetails: Error{
+    let statusCode: Int
+    let message: String
+}

@@ -8,15 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var contentViewModel = ContentViewModel()
     
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        Group{
+            if contentViewModel.isChecking{
+                ProgressView("Checking")
+            }else{
+                if contentViewModel.userNeedsToSignUp{
+                    SignUpView()
+                } else{
+                    MainView()
+                }
+            }
         }
-        .padding()
     }
 }
 

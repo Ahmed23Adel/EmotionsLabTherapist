@@ -9,8 +9,9 @@ import Foundation
 import Security
 
 
-class KeychainHelper {
+struct KeychainHelper {
     static let shared = KeychainHelper()
+    private init(){}
     
     func save(_ data: Data, service: String, account: String) {
         let query = [
