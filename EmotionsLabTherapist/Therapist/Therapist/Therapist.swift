@@ -73,4 +73,13 @@ class Therapist: ObservableObject{
         
     }
     
+    
+    func tryReadAppleId() -> (Bool, String?) {
+        loadTherapistData()
+        if appleIdAccount != "" {
+            return (true,appleIdAccount)
+        } else {
+            return (false, nil)
+        }
+    }
 }

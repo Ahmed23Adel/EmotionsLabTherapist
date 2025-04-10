@@ -11,6 +11,12 @@ import AuthenticationServices
 @MainActor
 class SignupViewModel: ObservableObject{
     @Published var isClickedOnSignUpButton: Bool = false
+    @Published var hasUserSignedUp: Bool = false
+    private let therapsit = Therapist.shared
+    @Published var isSignUpFailed = false
+    @Published private(set) var signUpErrorMsg = ""
+    @Published private(set) var signUpErrorTitle = ""
+    @Published private (set) var isNavigateToMainView = false
     
     func configureRequest(_ request: ASAuthorizationAppleIDRequest) {
         request.requestedScopes = [.fullName, .email]
@@ -20,11 +26,9 @@ class SignupViewModel: ObservableObject{
         Task {
             DispatchQueue.main.async{
                 self.isClickedOnSignUpButton = true
+                print("isClickedOnSignUpButton", self.isClickedOnSignUpButton)
             }
             await tempHandleAuthorization()
-            DispatchQueue.main.async{
-                self.isClickedOnSignUpButton = false
-            }
         }
         return
         // TODO uncomment when you have paid apple account
@@ -50,6 +54,27 @@ class SignupViewModel: ObservableObject{
         let userID = "jkfda8104"
         let fullName = "ahmed adel"
         let email = "ahmed9884@gmail.com"
+        Task{
+            await therapsit.signup(userID: userID, fullName: fullName, email: email)
+            if await therapsit.authAccess.loginUsingAppleAuth(userID: userID){
+                print("u1")
+                DispatchQueue.main.async {
+                    print("u2")
+                    self.isClickedOnSignUpButton = false
+                    self.hasUserSignedUp = false
+                    self.isNavigateToMainView = true
+                }
+                
+            } else{
+                isSignUpFailed = false
+                signUpErrorMsg = "Please try again later"
+                signUpErrorTitle = "Signup Failed"
+            }
+            
+        }
+        
+        
+        
         
         
     }

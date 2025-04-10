@@ -32,7 +32,20 @@ class ContentViewModel: ObservableObject{
                 if await therapist.authAccess.refreshToken(){
                     userNeedsToSignUp = false
                 } else{
-                    userNeedsToSignUp = true
+                    let (isSuccess, appleId) = therapist.tryReadAppleId()
+                    if isSuccess {
+                        if let appleId = appleId{
+                            if await therapist.authAccess.loginUsingAppleAuth(userID: appleId){
+                                userNeedsToSignUp = false
+                            } else{
+                                userNeedsToSignUp = true
+                            }
+                            
+                        }
+                    } else{
+                        userNeedsToSignUp = true
+                    }
+                    
                 }
             }
         } else{
