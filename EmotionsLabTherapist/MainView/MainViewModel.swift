@@ -8,10 +8,17 @@
 import Foundation
 
 class MainViewModel: ObservableObject{
-    @Published private var isShowAddNewPatientSheet = false
+    @Published var isShowAddNewPatientSheet = false
+    var newCreatedPatient:Patient = Patient()
     
     
     func showAddNewPatientSheet(){
+        prepareBeforeNavigatingToAddNewPatient()
         self.isShowAddNewPatientSheet = true
     }
+    
+    func prepareBeforeNavigatingToAddNewPatient(){
+        newCreatedPatient = Patient()
+    }
+    
 }

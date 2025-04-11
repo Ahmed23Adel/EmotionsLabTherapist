@@ -49,7 +49,10 @@ struct MainView: View {
             UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
             AppDelegate.orientationLock = .landscape
         }
-        
+        .sheet(isPresented: $mainViewModel.isShowAddNewPatientSheet){
+            
+            AddNewPatient(patient: mainViewModel.newCreatedPatient)
+        }
         
         
     }
