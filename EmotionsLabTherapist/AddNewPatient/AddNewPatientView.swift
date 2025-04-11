@@ -1,5 +1,7 @@
 import SwiftUI
 
+import SwiftUI
+
 struct AddNewPatient: View {
     @StateObject private var viewModel: AddNewPatientViewModel
     @Environment(\.dismiss) private var dismiss
@@ -13,32 +15,48 @@ struct AddNewPatient: View {
         ZStack {
             // Background that fills entire screen
             CustomBakcground()
-            if viewModel.isSavigPatient{
+            
+            if viewModel.isSavigPatient {
                 ProgressView("Please wait...")
-            }
-            if !viewModel.isSavigPatient{
-                VStack(spacing: 24){
-                    customInputField(title: "First Name", text: $viewModel.firstName, icon: "person", isShowError: $viewModel.isShowFirstNameError, errorMsg: $viewModel.firstNameErrorMsg)
-                    customInputField(title: "Last Name", text: $viewModel.lastName, icon: "person", isShowError: $viewModel.isShowLastNameError, errorMsg: $viewModel.lastNameErrorMsg)
+            } else {
+                // Use VStack to organize the content vertically
+                VStack {
+                    Text("Add New Patient")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color(red: 39/255, green: 84/255, blue: 138/255))
+                        .padding(.top, 50)
+                        .padding(.bottom, 30)
                     
-                    Button("Save"){
-                        viewModel.savePatient()
+                    VStack(spacing: 24) {
+                        customInputField(title: "First Name", text: $viewModel.firstName, icon: "person", isShowError: $viewModel.isShowFirstNameError, errorMsg: $viewModel.firstNameErrorMsg)
+                        
+                        customInputField(title: "Last Name", text: $viewModel.lastName, icon: "person", isShowError: $viewModel.isShowLastNameError, errorMsg: $viewModel.lastNameErrorMsg)
+                        
+                        Button("Save") {
+                            viewModel.savePatient()
+                        }
+                        .foregroundColor(Color(red: 39/255, green: 84/255, blue: 138/255))
+                        .buttonStyle(.borderless)
+                        .padding()
+                        
                     }
-                    .buttonStyle(.borderless)
+                    .padding(.horizontal)
+                    
+                    Spacer() // Push content to the top
                 }
             }
-            
         }
     }
     
-    private func customInputField(title: String, text: Binding<String>, icon: String, isShowError: Binding<Bool>, errorMsg: Binding<String>) -> some View{
+    private func customInputField(title: String, text: Binding<String>, icon: String, isShowError: Binding<Bool>, errorMsg: Binding<String>) -> some View {
         
         VStack(spacing: 0) {
-            HStack{
+            HStack {
                 Image(systemName: icon)
                     .foregroundColor(.blue)
                     .padding(.all, 6)
-                VStack{
+                VStack {
                     TextField("\(title)", text: text)
                         .font(.body)
                         .padding(.leading, 10)
@@ -61,6 +79,7 @@ struct AddNewPatient: View {
                     }
                     .background(Color.red.opacity(0.1))
                     .cornerRadius(8)
+                    .padding(.top, 8)
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
