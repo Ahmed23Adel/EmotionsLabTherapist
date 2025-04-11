@@ -74,6 +74,7 @@ struct MainView: View {
             // Set supported orientations to landscape only
             AppDelegate.orientationLock = .landscape
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
