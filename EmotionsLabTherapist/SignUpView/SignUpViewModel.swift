@@ -26,7 +26,6 @@ class SignupViewModel: ObservableObject{
         Task {
             DispatchQueue.main.async{
                 self.isClickedOnSignUpButton = true
-                print("isClickedOnSignUpButton", self.isClickedOnSignUpButton)
             }
             await tempHandleAuthorization()
         }
@@ -51,12 +50,14 @@ class SignupViewModel: ObservableObject{
     }
 
     func tempHandleAuthorization() async {
-        let userID = "jkfda8104"
+        let appleId = "jkfda8104"
         let fullName = "ahmed adel"
         let email = "ahmed9884@gmail.com"
         Task{
-            await therapsit.signup(userID: userID, fullName: fullName, email: email)
-            if await therapsit.authAccess.loginUsingAppleAuth(userID: userID){
+            let therapistId = await therapsit.signupAndExtractTherapistId(appleId: appleId, fullName: fullName, email: email)
+            print("therapistId", therapistId)
+            therapsit.saveTherapistId(therapistId: therapistId)
+            if await therapsit.authAccess.loginUsingAppleAuth(appleId: appleId){
                 print("u1")
                 DispatchQueue.main.async {
                     print("u2")

@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+class MainViewModel: ObservableObject{
+    @Published private var isShowAddNewPatientSheet = false
+    
+    
+    func showAddNewPatientSheet(){
+        self.isShowAddNewPatientSheet = true
+    }
+}

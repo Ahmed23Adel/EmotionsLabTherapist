@@ -145,10 +145,10 @@ class AuthAccess: ObservableObject{
     
     
     
-    func loginUsingAppleAuth(userID: String) async -> Bool{
+    func loginUsingAppleAuth(appleId: String) async -> Bool{
         do {
             let data = try await apiCaller.callApiNoToken(endpoint: "auth/apple", method: .post, params: [
-                "apple_id": userID
+                "apple_id": appleId
             ])
             let decoder = JSONDecoder()
             let response = try decoder.decode(LoginUsingAppleResponse.self, from: data)

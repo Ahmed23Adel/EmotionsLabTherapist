@@ -7,74 +7,51 @@
 
 import SwiftUI
 
-struct Item: Identifiable, Hashable {
-    let id = UUID()
-    let title: String
-    let description: String
-    
-    // Add Hashable conformance
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    static func == (lhs: Item, rhs: Item) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
-
-class ItemsViewModel: ObservableObject {
-    @Published var items = [
-        Item(title: "Patient 1", description: "Therapy sessions twice a week. Showing improvement in managing anxiety."),
-        Item(title: "Patient 2", description: "New patient. Initial assessment completed. Treatment plan focuses on depression management."),
-        Item(title: "Patient 3", description: "Working through trauma therapy. Progress is steady with occasional setbacks."),
-        Item(title: "Patient 4", description: "Family therapy sessions. All members engaged and communicating more effectively."),
-        Item(title: "Patient 5", description: "Cognitive behavioral therapy for phobias. Exposure therapy showing promising results.")
-    ]
-}
-
 
 struct MainView: View {
-    @StateObject private var viewModel = ItemsViewModel()
-    @State private var selectedItem: Item?
-    
+    @StateObject var mainViewModel = MainViewModel()
     var body: some View {
         NavigationSplitView {
-            // List on the left
-            List(viewModel.items, selection: $selectedItem) { item in
-                Text(item.title)
-                    .tag(item)  // This is the key addition
+            ZStack {
+                // Background color for the entire view
+                Color(red: 194/255, green: 179/255, blue: 140/255)
+                    .ignoresSafeArea()
+                
+                VStack {
+                    List(0..<5) { item in
+                        Text("item \(item)")
+                            .tag(item)
+                    }
+                    .scrollContentBackground(.hidden) // Hides the default list background
+                    .background(Color(red: 194/255, green: 179/255, blue: 140/255))
+                    
+                    
+                    Button(action: {
+                        mainViewModel.showAddNewPatientSheet()
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "plus")
+                            Text("Add new patient")
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .padding()
+                    .background(Color(red: 194/255, green: 179/255, blue: 140/255)) // Set button background
+                }
             }
             .navigationTitle("Patients")
         } detail: {
-            // Detail view on the right
-            if let selectedItem = selectedItem {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text(selectedItem.title)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                    
-                    Text(selectedItem.description)
-                        .font(.body)
-                    
-                    Spacer()
-                }
-                .padding()
-                .navigationTitle("Patient Details")
-            } else {
-                Text("Select a patient to view details")
-                    .font(.title)
-                    .foregroundColor(.gray)
-            }
+            Color(red: 245/255, green: 238/255, blue: 220/255)
+                .ignoresSafeArea()
         }
         .navigationSplitViewStyle(.balanced)
         .onAppear {
-            // Force landscape orientation when view appears
             UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
-            
-            // Set supported orientations to landscape only
             AppDelegate.orientationLock = .landscape
         }
-        .navigationBarBackButtonHidden(true)
+        
+        
+        
     }
 }
 

@@ -13,12 +13,14 @@ class Therapist: ObservableObject{
     private(set) var fullName: String = ""
     private(set) var email: String = ""
     private(set) var appleId: String = ""
+    private(set) var therapistID: String = ""
     private let apiCaller = ApiCaller()
     
     private var therapistService = "therapist"
     private let fullNameAccount = "fullName"
     private let emailAccount = "email"
     private let appleIdAccount = "appleId"
+    private let therapistIdAccount = "therapistId"
     
     private init (){}
     
@@ -26,6 +28,7 @@ class Therapist: ObservableObject{
         self.fullName = String(data: readKeychainForServiceAndAccount(therapistService, fullNameAccount), encoding: .utf8) ?? ""
         self.email = String(data: readKeychainForServiceAndAccount(therapistService, emailAccount), encoding: .utf8) ?? ""
         self.appleId = String(data: readKeychainForServiceAndAccount(therapistService, appleIdAccount), encoding: .utf8) ?? ""
+        self.therapistID = String(data: readKeychainForServiceAndAccount(therapistService, therapistIdAccount), encoding: .utf8) ?? ""
     }
         
     func readKeychainForServiceAndAccount(_ service: String, _ account: String) -> Data {
@@ -37,13 +40,14 @@ class Therapist: ObservableObject{
     }
     
     
-    func signup(userID: String, fullName: String, email: String) async {
+    func signupAndExtractTherapistId(appleId: String, fullName: String, email: String) async -> String{
         do {
-            let _ = try await apiCaller.callApiNoToken(endpoint: "therapists", method: .post, body: [
+            let response = try await apiCaller.callApiNoToken(endpoint: "therapists", method: .post, body: [
                 "name": fullName,
                 "email": email,
-                "apple_id": userID
+                "apple_id": appleId
             ])
+            return try parseSignupReseponse(response: response)
             
         } catch let error as ApiCallingErrorDetails {
             if error.statusCode == 400 {
@@ -53,8 +57,18 @@ class Therapist: ObservableObject{
         } catch {
             fatalError("Unexpected error happened Code 01")
         }
+        return ""
     }
 
+    private func parseSignupReseponse(response: Data) throws -> String{
+        do{
+            let decoder = JSONDecoder()
+            let response = try decoder.decode(SignUpResponse.self, from: response)
+            return response.therapist_id
+        } catch{
+            throw ApiCallerErrors.serializationError
+        }
+    }
     
     
     private func saveAppleIdInUserDefaults(name: String, email: String, appleId: String){
@@ -81,5 +95,10 @@ class Therapist: ObservableObject{
         } else {
             return (false, nil)
         }
+    }
+    
+    func saveTherapistId(therapistId: String){
+        let serviceName = Constants.KeyChainConstants.baseService + therapistService
+        KeychainHelper.shared.save(therapistId.data(using: .utf8) ?? Data(), service: serviceName, account: therapistIdAccount)
     }
 }
