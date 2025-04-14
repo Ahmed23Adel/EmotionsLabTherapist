@@ -10,7 +10,7 @@ import SwiftUI
 struct ScheduleNewPeriodView: View {
     @StateObject private var viewModel = ScheduleNewPeriodViewModel()
     var patient: Patient
-    var period: Period
+    @Binding var period: Period
     @Binding var parentSelectedState: PeriodSessionHolderState
     var body: some View {
         ZStack{
@@ -46,6 +46,9 @@ struct ScheduleNewPeriodView: View {
         }
         .onAppear{
             viewModel.setPatient(patient: patient)
+                    viewModel.setPeriod(periodBinding: $period) 
+            viewModel.startDate = period.startDate
+            viewModel.endDate = period.endDate
         }
         .alert(isPresented: $viewModel.isShowError){
             Alert(title: Text(viewModel.errorTitle),
@@ -82,5 +85,6 @@ struct DatePickerView: View {
 
 
 #Preview {
-    ScheduleNewPeriodView(patient: Patient(), period: Period(), parentSelectedState: .constant(.selectingPeriod))
+    @State var dummy = Period()
+    ScheduleNewPeriodView(patient: Patient(), period: $dummy, parentSelectedState: .constant(.selectingPeriod))
 }

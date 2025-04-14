@@ -13,8 +13,12 @@ struct ScheduleNewPeriodAndSessionHolder: View {
     var body: some View {
         ZStack{
             if viewModel.currentState == .selectingPeriod{
-                ScheduleNewPeriodView(patient: viewModel.patient, period: viewModel.period, parentSelectedState: $viewModel.currentState)
-                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                ScheduleNewPeriodView(
+                    patient: viewModel.patient,
+                    period: $viewModel.period, // Pass a binding instead of a value
+                    parentSelectedState: $viewModel.currentState
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
             } else {
                 ScheduleNewSessionsView(period: viewModel.period, patient: viewModel.patient)
                     .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))

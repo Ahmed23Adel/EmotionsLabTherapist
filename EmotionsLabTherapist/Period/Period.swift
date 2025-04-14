@@ -7,21 +7,23 @@
 
 import Foundation
 
-class Period{
-    private var startDate = Date()
-    private var endDate = Date()
+
+struct Period {
+    var startDate: Date = Date()
+    var endDate: Date = Date()
     
-    init(){
+    mutating func setStartDate(_ date: Date) {
+        startDate = date
     }
     
-    func setStartDate(_ date: Date){
-        self.startDate = date
-    }
-    
-    func setEndDate(_ date: Date) throws{
-        if date <= startDate {
+    mutating func setEndDate(_ date: Date) throws {
+        // Make sure to validate before setting
+        if date >= startDate {
+            endDate = date
+        } else {
             throw PeriodError.endDateEarlierThanStartDate
         }
     }
-    
 }
+
+
