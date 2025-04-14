@@ -17,6 +17,8 @@ class MainViewModel: ObservableObject{
     private let therapistOwner = Therapist.shared
     @Published var isLoadingAllPatients = false
     
+    @Published var isShowSchedulePeriodSheet: Bool = false
+    
     init (){
         print("p1")
         Task{
@@ -65,5 +67,7 @@ class MainViewModel: ObservableObject{
         }
     }
     
-    
+    func showSchedulePeriod(){
+        self.isShowSchedulePeriodSheet = true
+    }
 }

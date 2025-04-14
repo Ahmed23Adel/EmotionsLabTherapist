@@ -47,7 +47,25 @@ struct MainView: View {
             .navigationTitle("Patients")
         } detail: {
             if let selectedPatient = viewModel.selectedPatient{
-                PatientDetailView(patient: selectedPatient)
+                
+                ZStack {
+                    Color(red: 245/255, green: 238/255, blue: 220/255)
+                        .ignoresSafeArea()
+                    VStack{
+                        HStack{
+                            Spacer()
+                            Button{
+                                viewModel.showSchedulePeriod()
+                            } label: {
+                                Image(systemName: "plus")
+                            }
+                            .padding(.trailing, 20)
+                            
+                        }
+                        PatientDetailView(patient: selectedPatient)
+                    }
+                }
+                
             } else{
                 Color(red: 245/255, green: 238/255, blue: 220/255)
                     .ignoresSafeArea()
@@ -67,6 +85,10 @@ struct MainView: View {
         .sheet(isPresented: $viewModel.isShowAddNewPatientSheet){
             
             AddNewPatient(patient: viewModel.newCreatedPatient)
+        }
+        .sheet(isPresented: $viewModel.isShowSchedulePeriodSheet){
+            
+            ScheduleNewPeriodAndSessionHolder(patient: viewModel.selectedPatient ?? Patient())
         }
         
         
