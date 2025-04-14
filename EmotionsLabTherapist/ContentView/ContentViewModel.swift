@@ -25,24 +25,37 @@ class ContentViewModel: ObservableObject{
     
     func checkIsSignedIn() async{
         if checkIsAbleToContinueSession(){
-            if checkIsAbleToContinueSessionWithExistingAccessToken(){
+            print("a1")
+            if await checkIsAbleToContinueSessionWithExistingAccessToken(){
+                print("a2")
                 userNeedsToSignUp = false
+                therapist.loadTherapistData()
             } else{
+                print("a3")
                 // some time refresh coulld fail if it's expired
                 if await therapist.authAccess.refreshToken(){
+                    print("a4")
                     userNeedsToSignUp = false
+                    therapist.loadTherapistData()
                 } else{
+                    print("a5")
                     let (isSuccess, appleId) = therapist.tryReadAppleId()
                     if isSuccess {
+                        print("a6")
                         if let appleId = appleId{
+                            print("a7")
                             if await therapist.authAccess.loginUsingAppleAuth(appleId: appleId){
+                                print("a8")
                                 userNeedsToSignUp = false
+                                therapist.loadTherapistData()
                             } else{
+                                print("a9")
                                 userNeedsToSignUp = true
                             }
                             
                         }
                     } else{
+                        print("a11")
                         userNeedsToSignUp = true
                     }
                     
@@ -59,7 +72,7 @@ class ContentViewModel: ObservableObject{
         therapist.authAccess.tryReadRefreshTokenFromKeyChainAndValidate()
     }
     
-    private func checkIsAbleToContinueSessionWithExistingAccessToken() -> Bool{
-        therapist.authAccess.tryReadAccessTokenFromKeyChainAndValidate()
+    private func checkIsAbleToContinueSessionWithExistingAccessToken() async -> Bool{
+        return await therapist.authAccess.tryReadAccessTokenFromKeyChainAndValidate()
     }
 }

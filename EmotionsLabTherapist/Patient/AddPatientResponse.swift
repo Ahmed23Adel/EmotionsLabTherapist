@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+struct AddPatientResponse: Decodable{
+    let username: String
+    let patient_id: String
+    let therapist_id: String
+    let coins: Int
+    let created_at: String
+    
+}

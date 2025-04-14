@@ -29,14 +29,19 @@ class AuthAccess: ObservableObject{
     
     private init(){}
     
-    func tryReadAccessTokenFromKeyChainAndValidate() -> Bool{
-       tryReadTokenFromKeyChainAndValidate(
+    func tryReadAccessTokenFromKeyChainAndValidate() async -> Bool{
+        let tokenFound = tryReadTokenFromKeyChainAndValidate(
            account: accessTokenAccount,
            setTokenValue: { self.accessTokenValue = $0 },
            setIsStored: { self.isAccessTokenStored = $0 },
-           validate: { self.validateAccessToken() }
-       )
-        return self.isAccessTokenStored
+           
+        )
+        if tokenFound{
+            self.isAccessTokenValid = await validateAccessToken()
+            return self.isAccessTokenValid
+            
+        }
+        return false
     }
 
     func tryReadRefreshTokenFromKeyChainAndValidate() -> Bool {
@@ -44,7 +49,7 @@ class AuthAccess: ObservableObject{
            account: refreshTokenAccount,
            setTokenValue: { self.refreshTokenValue = $0 },
            setIsStored: { self.isRefreshTokenStored = $0 },
-           validate: { self.validateRefreshToken() }
+           
        )
         return self.isRefreshTokenStored
     }
@@ -53,15 +58,17 @@ class AuthAccess: ObservableObject{
        account: String,
        setTokenValue: (String) -> Void,
        setIsStored: (Bool) -> Void,
-       validate: () -> Void) {
+       ) -> Bool{
            
        if let tokenData = readFromKeychain(account: account),
           let token = String(data: tokenData, encoding: .utf8) {
+           print("token ", token)
            setTokenValue(token)
            setIsStored(true)
-           validate()
+           return true
        } else {
            setIsStored(false)
+           return false
        }
     }
 
@@ -70,36 +77,30 @@ class AuthAccess: ObservableObject{
         return KeychainHelper.shared.read(service: serviceName, account: account)
     }
     
-    private func validateAccessToken() {
-        validateToken(token: accessTokenValue, token_type: accessTokenAccount){ isValid in
-            self.isAccessTokenValid = isValid
-        }
+    private func validateAccessToken() async -> Bool{
+        return await validateToken(token: accessTokenValue, token_type: accessTokenAccount)
+//
     }
     
-    private func validateRefreshToken() {
-        validateToken(token: refreshTokenValue, token_type: refreshTokenAccount){ isValid in
-            self.isRefreshTokenValid = isValid
-        }
+    private func validateRefreshToken() async -> Bool {
+        return await validateToken(token: refreshTokenValue, token_type: refreshTokenAccount)
     }
     
-    private func validateToken(token: String, token_type: String, completion: @escaping (Bool) -> Void){
-        // Task let this block of code run in the background as not to block the UI
-        Task {
-            do {
-                let data = try await apiCaller.callApiNoToken(
-                    endpoint: "validate-token",
-                    method: .post,
-                    body: [
-                        "token": token,
-                        "token_type": token_type
-                    ]
-                )
-                let decoder = JSONDecoder()
-                let response = try decoder.decode(TokenValidationResponse.self, from: data)
-                completion(response.valid)
-            } catch {
-                completion(false)
-            }
+    private func validateToken(token: String, token_type: String) async -> Bool {
+        do {
+            let data = try await apiCaller.callApiNoToken(
+                endpoint: "validate-token",
+                method: .post,
+                body: [
+                    "token": token,
+                    "token_type": token_type
+                ]
+            )
+            let decoder = JSONDecoder()
+            let response = try decoder.decode(TokenValidationResponse.self, from: data)
+            return response.valid
+        } catch {
+            return false
         }
     }
     

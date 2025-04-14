@@ -18,7 +18,7 @@ struct AddNewPatient: View {
             
             if viewModel.isSavigPatient {
                 ProgressView("Please wait...")
-            } else {
+            } else if !viewModel.isPatientAlreadySaved{
                 // Use VStack to organize the content vertically
                 VStack {
                     Text("Add New Patient")
@@ -45,6 +45,42 @@ struct AddNewPatient: View {
                     
                     Spacer() // Push content to the top
                 }
+                .alert(isPresented: $viewModel.isShowAlertFailAddPatient){
+                    Alert(title: Text(viewModel.alertFailAddPatientErrorTitle),
+                          message: Text(viewModel.alertFailAddPatientErrorMsg),
+                          dismissButton: .default(Text("Ok"))
+                    )
+                }
+                
+            }
+            else if viewModel.isPatientAlreadySaved {
+                VStack{
+                    HStack{
+                        VStack{
+                            Text("username: \(viewModel.newPatientUsername)")
+                                .font(.title)
+                                .padding()
+                                .foregroundColor(Color(red: 39/255, green: 84/255, blue: 138/255))
+                            Text("Please give this username to your patient to log in")
+                        }
+                        
+                        
+                        Button{
+                            UIPasteboard.general.string = viewModel.newPatientUsername
+                        } label: {
+                            Image(systemName: "doc.on.doc")
+                                .padding()
+                        }
+                        
+                        
+                        
+                    }
+                    Button ("Close"){
+                        dismiss()
+                    }
+                    .padding()
+                }
+                
             }
         }
     }

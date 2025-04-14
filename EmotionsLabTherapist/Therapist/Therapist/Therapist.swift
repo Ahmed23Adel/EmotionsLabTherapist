@@ -24,7 +24,7 @@ class Therapist: ObservableObject{
     
     private init (){}
     
-    private func loadTherapistData(){
+    func loadTherapistData(){
         self.fullName = String(data: readKeychainForServiceAndAccount(therapistService, fullNameAccount), encoding: .utf8) ?? ""
         self.email = String(data: readKeychainForServiceAndAccount(therapistService, emailAccount), encoding: .utf8) ?? ""
         self.appleId = String(data: readKeychainForServiceAndAccount(therapistService, appleIdAccount), encoding: .utf8) ?? ""

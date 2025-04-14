@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class MainViewModel: ObservableObject{
     @Published var isShowAddNewPatientSheet = false
     var newCreatedPatient:Patient = Patient()

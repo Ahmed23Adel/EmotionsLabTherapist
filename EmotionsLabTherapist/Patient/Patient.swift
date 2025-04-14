@@ -7,12 +7,13 @@
 
 import Foundation
 
+@MainActor
 class Patient: ObservableObject{
     private(set) var firstName: String = ""
     private(set) var lastName: String = ""
-    
+    private(set) var username: String = ""
     private let MIN_NAME_LENGTH = 2
-    
+    private let apiCaller = ApiCaller()
     init(){
         
     }
@@ -49,6 +50,27 @@ class Patient: ObservableObject{
     }
     
     
+    func uploadData(token: String, therapistId: String, funcShowError: ()-> Void, funcSucceed: (String)-> Void) async {
+        do {
+            
+            let data = try await apiCaller.callApiWithToken(endpoint: "patients",
+                                       method: .post, token: token,
+                                       body: [
+                                        "therapist_id": therapistId,
+                                        "first_name": firstName,
+                                        "last_name": lastName
+                                       ]
+            )
+
+            let decoder = JSONDecoder()
+            let response = try decoder.decode(AddPatientResponse.self, from: data)
+            self.username = response.username
+            funcSucceed(response.username)
+        } catch {
+            funcShowError()
+        }
+        
+    }
     
     
     

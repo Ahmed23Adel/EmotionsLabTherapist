@@ -13,23 +13,51 @@ class ApiCaller{
     private var baseUrl: String = "http://127.0.0.1:8000/"
     
     func callApiNoToken(endpoint: String, method: Method, body: [String: String]? = nil, params: [String: String]? = nil) async throws ->  Data{
-            do{
-                let request = try prepareURLReqeestNoToken(endpoint: endpoint, method: method, body: body, params: params)
-                let (data, response) = try await URLSession.shared.data(for: request)
+        do{
+            let request = try prepareURLReqeestNoToken(endpoint: endpoint, method: method, body: body, params: params)
+            let (data, response) = try await URLSession.shared.data(for: request)
 
+            
+            if let httpResponse = response as? HTTPURLResponse,
+                  !(200...299).contains(httpResponse.statusCode)  {
+                throw ApiCallingErrorDetails(statusCode: httpResponse.statusCode, message: httpResponse.description)
                 
-                if let httpResponse = response as? HTTPURLResponse,
-                      !(200...299).contains(httpResponse.statusCode)  {
-                    throw ApiCallingErrorDetails(statusCode: httpResponse.statusCode, message: httpResponse.description)
-                    
-                }
-                return data
-                
-            } catch{
-                throw error
             }
+            return data
+            
+        } catch{
+            throw error
         }
+    }
         
+    func callApiWithToken(endpoint: String,
+                          method: Method,
+                          token: String,
+                          body: [String: String]? = nil,
+                          params: [String: String]? = nil)
+    async throws ->  Data{
+        do{
+            var request = try prepareURLReqeestNoToken(endpoint: endpoint, method: method, body: body, params: params)
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
+                // Add this to see the response body that contains error details
+                let responseString = String(data: data, encoding: .utf8) ?? "Unable to parse response"
+                print("Response body: \(responseString)")
+                throw ApiCallingErrorDetails(statusCode: httpResponse.statusCode, message: httpResponse.description)
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse,
+                  !(200...299).contains(httpResponse.statusCode)  {
+                throw ApiCallingErrorDetails(statusCode: httpResponse.statusCode, message: httpResponse.description)
+                
+            }
+            return data
+        } catch{
+            throw error
+        }
+    }
     
     private func prepareURLReqeestNoToken(endpoint: String, method: Method, body: [String: String]? = nil, params: [String: String]?) throws -> URLRequest{
             let completeUrl = self.baseUrl + endpoint

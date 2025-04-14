@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class AddNewPatientViewModel: ObservableObject{
     var patient: Patient
     @Published var firstName:  String = ""
@@ -16,6 +17,15 @@ class AddNewPatientViewModel: ObservableObject{
     @Published var firstNameErrorMsg = ""
     @Published var lastNameErrorMsg = ""
     @Published var isSavigPatient = false
+    private let therapistOwner = Therapist.shared
+    
+    @Published var isShowAlertFailAddPatient =  false
+    @Published var alertFailAddPatientErrorMsg =  ""
+    @Published var alertFailAddPatientErrorTitle =  ""
+    
+    
+    @Published var isPatientAlreadySaved = false
+    @Published var newPatientUsername = ""
     
     init(patient: Patient) {
         self.patient = patient
@@ -24,6 +34,17 @@ class AddNewPatientViewModel: ObservableObject{
     func savePatient(){
         validateInputFields()
         if !isShowFirstNameError && !isShowLastNameError{
+            isSavigPatient = true
+            Task{
+                await patient.uploadData(
+                    token: therapistOwner.authAccess.accessTokenValue,
+                    therapistId: therapistOwner.therapistID,
+                    funcShowError: showErrorForNotAddingPatient,
+                    funcSucceed: showSuccessForAddingNewPatient
+                )
+                
+                
+            }
             
         }
     }
@@ -63,6 +84,30 @@ class AddNewPatientViewModel: ObservableObject{
         } catch {
             
         }
+    }
+    
+    private func showErrorForNotAddingPatient(){
+        DispatchQueue.main.async {
+            self.isSavigPatient = false
+            self.isShowAlertFailAddPatient = true
+            self.alertFailAddPatientErrorMsg = "please try again later"
+            self.alertFailAddPatientErrorTitle = "Faild to add new patient"
+        }
+        
+        
+    }
+    
+    private func showSuccessForAddingNewPatient(username: String){
+        print("showSuccessForAddingNewPatient", username)
+        DispatchQueue.main.async {
+            self.isSavigPatient = false
+            self.isPatientAlreadySaved = true
+            self.newPatientUsername = username
+        }
+    }
+    
+    private func funcStopShowingProgress(){
+        isSavigPatient = false
     }
 }
 
