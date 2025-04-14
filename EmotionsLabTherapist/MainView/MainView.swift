@@ -9,7 +9,7 @@ import SwiftUI
 
 
 struct MainView: View {
-    @StateObject var mainViewModel = MainViewModel()
+    @StateObject var viewModel = MainViewModel()
     var body: some View {
         NavigationSplitView {
             ZStack {
@@ -18,16 +18,21 @@ struct MainView: View {
                     .ignoresSafeArea()
                 
                 VStack {
-                    List(0..<5) { item in
-                        Text("item \(item)")
-                            .tag(item)
+                    if viewModel.isLoadingAllPatients{
+                        ProgressView("Please wait...")
+                    } else{
+                        List(viewModel.listOfPatients, id: \.patientId, selection: $viewModel.selectedPatient) { patient in
+                            Text("\(patient.firstName) \(patient.lastName)")
+                                .tag(patient)
+                        }
+                        .scrollContentBackground(.hidden) // Hides the default list background
+                        .background(Color(red: 194/255, green: 179/255, blue: 140/255))
                     }
-                    .scrollContentBackground(.hidden) // Hides the default list background
-                    .background(Color(red: 194/255, green: 179/255, blue: 140/255))
+                    
                     
                     
                     Button(action: {
-                        mainViewModel.showAddNewPatientSheet()
+                        viewModel.showAddNewPatientSheet()
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "plus")
@@ -41,17 +46,27 @@ struct MainView: View {
             }
             .navigationTitle("Patients")
         } detail: {
-            Color(red: 245/255, green: 238/255, blue: 220/255)
-                .ignoresSafeArea()
+            if let selectedPatient = viewModel.selectedPatient{
+                PatientDetailView(patient: selectedPatient)
+            } else{
+                Color(red: 245/255, green: 238/255, blue: 220/255)
+                    .ignoresSafeArea()
+                    .overlay(
+                        Text("Pleaes select a patient for more details")
+                            .font(.title)
+                            .foregroundColor(.gray)
+                    )
+            }
+            
         }
         .navigationSplitViewStyle(.balanced)
         .onAppear {
             UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
             AppDelegate.orientationLock = .landscape
         }
-        .sheet(isPresented: $mainViewModel.isShowAddNewPatientSheet){
+        .sheet(isPresented: $viewModel.isShowAddNewPatientSheet){
             
-            AddNewPatient(patient: mainViewModel.newCreatedPatient)
+            AddNewPatient(patient: viewModel.newCreatedPatient)
         }
         
         

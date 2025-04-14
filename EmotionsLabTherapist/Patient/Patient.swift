@@ -8,14 +8,35 @@
 import Foundation
 
 @MainActor
-class Patient: ObservableObject{
+class Patient: ObservableObject, Identifiable, Hashable{
+    nonisolated let id = UUID()
+    
     private(set) var firstName: String = ""
     private(set) var lastName: String = ""
     private(set) var username: String = ""
+    private(set) var patientId: String = ""
+    private(set) var coins: Int = 0
+    
     private let MIN_NAME_LENGTH = 2
     private let apiCaller = ApiCaller()
     init(){
         
+    }
+    
+    static func == (lhs: Patient, rhs: Patient) -> Bool {
+        return lhs.patientId == rhs.patientId
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(patientId)
+    }
+    
+    func setUsername(_ username: String){
+        self.username = username
+    }
+    
+    func setPatientId(_ patientId: String){
+        self.patientId = patientId
     }
     
     func setFirstName(_ name: String) throws {
