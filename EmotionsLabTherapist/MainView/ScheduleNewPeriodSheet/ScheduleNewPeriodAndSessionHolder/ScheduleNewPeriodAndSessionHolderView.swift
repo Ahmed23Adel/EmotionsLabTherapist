@@ -20,7 +20,9 @@ struct ScheduleNewPeriodAndSessionHolder: View {
                 )
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
             } else {
-                ScheduleNewSessionsView(period: viewModel.period, patient: viewModel.patient)
+                ScheduleNewSessionsView(
+                    period: viewModel.period,
+                    patient: viewModel.patient)
                     .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
             }
         }

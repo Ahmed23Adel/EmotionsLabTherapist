@@ -34,10 +34,10 @@ class ApiCaller{
     func callApiWithToken(endpoint: String,
                           method: Method,
                           token: String,
-                          body: [String: String]? = nil,
+                          body: [String: Any]? = nil,
                           params: [String: String]? = nil)
-    async throws ->  Data{
-        do{
+    async throws -> Data {
+        do {
             var request = try prepareURLReqeestNoToken(endpoint: endpoint, method: method, body: body, params: params)
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -49,18 +49,13 @@ class ApiCaller{
                 throw ApiCallingErrorDetails(statusCode: httpResponse.statusCode, message: httpResponse.description)
             }
             
-            if let httpResponse = response as? HTTPURLResponse,
-                  !(200...299).contains(httpResponse.statusCode)  {
-                throw ApiCallingErrorDetails(statusCode: httpResponse.statusCode, message: httpResponse.description)
-                
-            }
             return data
-        } catch{
+        } catch {
             throw error
         }
     }
     
-    private func prepareURLReqeestNoToken(endpoint: String, method: Method, body: [String: String]? = nil, params: [String: String]?) throws -> URLRequest{
+    private func prepareURLReqeestNoToken(endpoint: String, method: Method, body: [String: Any]? = nil, params: [String: String]?) throws -> URLRequest{
             let completeUrl = self.baseUrl + endpoint
             guard var urlComponents = URLComponents(string: completeUrl) else{
                 throw ApiCallerErrors.invalidEndpoint

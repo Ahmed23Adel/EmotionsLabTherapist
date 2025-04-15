@@ -14,6 +14,7 @@ class ScheduleNewSessionsViewModel: ObservableObject{
     @Published var startDate = Date()
     @Published var endDate = Date()
     @Published var daySchedules: [DaySchedule] = []
+    @Published var isSavingPeriodAndSessions = false
     
     var formattedStartDate: String{
         let formatter = DateFormatter()
@@ -57,8 +58,18 @@ class ScheduleNewSessionsViewModel: ObservableObject{
         }
     }
     
-    func saveSesssions(){
-        
-    }
-    
+    func saveSesssions() async {
+        self.isSavingPeriodAndSessions = true
+        await period.uploadPeriod()
+        for dayScheule in daySchedules{
+            print("period", period.periodId)
+            let sessions = dayScheule.extractSessionObjects(period: period, patient: patient)
+            for session in sessions {
+                await session.uploadData()
+            }
+            
+        }
+        self.isSavingPeriodAndSessions = false
+           
+        }
 }

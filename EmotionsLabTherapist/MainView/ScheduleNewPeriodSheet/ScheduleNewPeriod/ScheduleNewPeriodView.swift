@@ -9,7 +9,9 @@ import SwiftUI
 
 struct ScheduleNewPeriodView: View {
     @StateObject private var viewModel = ScheduleNewPeriodViewModel()
+    // here i want a copy of it only
     var patient: Patient
+    //owned by parent
     @Binding var period: Period
     @Binding var parentSelectedState: PeriodSessionHolderState
     var body: some View {
@@ -46,7 +48,7 @@ struct ScheduleNewPeriodView: View {
         }
         .onAppear{
             viewModel.setPatient(patient: patient)
-                    viewModel.setPeriod(periodBinding: $period) 
+            viewModel.setPeriod(periodBinding: $period)
             viewModel.startDate = period.startDate
             viewModel.endDate = period.endDate
         }
