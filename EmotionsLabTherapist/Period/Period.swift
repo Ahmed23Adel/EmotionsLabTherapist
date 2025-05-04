@@ -28,7 +28,7 @@ class Period {
         }
     }
     
-    func uploadPeriod() async{
+    func uploadPeriod(patient: Patient) async{
         do {
             let therapist = Therapist.shared
             let formatter = ISO8601DateFormatter()
@@ -38,6 +38,7 @@ class Period {
                 method: .post,
                 token: therapist.authAccess.accessTokenValue,
                 body: [
+                    "patient_id": patient.patientId,
                     "name": "fixed name",
                     "start_date": formatter.string(from: startDate),
                     "end_date": formatter.string(from: endDate)

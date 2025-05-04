@@ -22,13 +22,19 @@ class Therapist: ObservableObject{
     private let appleIdAccount = "appleId"
     private let therapistIdAccount = "therapistId"
     
-    private init (){}
+    private init (){
+    }
     
     func loadTherapistData(){
         self.fullName = String(data: readKeychainForServiceAndAccount(therapistService, fullNameAccount), encoding: .utf8) ?? ""
         self.email = String(data: readKeychainForServiceAndAccount(therapistService, emailAccount), encoding: .utf8) ?? ""
         self.appleId = String(data: readKeychainForServiceAndAccount(therapistService, appleIdAccount), encoding: .utf8) ?? ""
         self.therapistID = String(data: readKeychainForServiceAndAccount(therapistService, therapistIdAccount), encoding: .utf8) ?? ""
+        print("fullName", fullName)
+        print("email", email)
+        print("appleId", appleId)
+        print("therapistID", therapistID)
+        
     }
         
     func readKeychainForServiceAndAccount(_ service: String, _ account: String) -> Data {
@@ -49,13 +55,8 @@ class Therapist: ObservableObject{
             ])
             return try parseSignupReseponse(response: response)
             
-        } catch let error as ApiCallingErrorDetails {
-            if error.statusCode == 400 {
-            } else {
-                print("An internal server error: \(error)")
-            }
         } catch {
-            fatalError("Unexpected error happened Code 01")
+            print("error in signup")
         }
         return ""
     }

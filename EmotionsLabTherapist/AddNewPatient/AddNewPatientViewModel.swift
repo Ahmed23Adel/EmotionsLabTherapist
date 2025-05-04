@@ -27,8 +27,11 @@ class AddNewPatientViewModel: ObservableObject{
     @Published var isPatientAlreadySaved = false
     @Published var newPatientUsername = ""
     
-    init(patient: Patient) {
+    private var onPatientAdded: (Patient) -> Void
+    
+    init(patient: Patient, onPatientAdded:  @escaping (Patient) -> Void) {
         self.patient = patient
+        self.onPatientAdded = onPatientAdded
     }
     
     func savePatient(){
@@ -42,10 +45,9 @@ class AddNewPatientViewModel: ObservableObject{
                     funcShowError: showErrorForNotAddingPatient,
                     funcSucceed: showSuccessForAddingNewPatient
                 )
-                
-                
+                print("before onPatientAdded")
+                onPatientAdded(patient)
             }
-            
         }
     }
     private func validateInputFields(){
@@ -98,7 +100,6 @@ class AddNewPatientViewModel: ObservableObject{
     }
     
     private func showSuccessForAddingNewPatient(username: String){
-        print("showSuccessForAddingNewPatient", username)
         DispatchQueue.main.async {
             self.isSavigPatient = false
             self.isPatientAlreadySaved = true

@@ -11,7 +11,6 @@ import SwiftUI
 @MainActor
 class ScheduleNewPeriodViewModel: ObservableObject{
     private var patient = Patient()
-    // Don't store a local copy, use a binding
     private var periodBinding: Binding<Period>?
     
     @Published var startDate: Date = Date()

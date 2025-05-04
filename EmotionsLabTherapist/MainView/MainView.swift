@@ -13,7 +13,6 @@ struct MainView: View {
     var body: some View {
         NavigationSplitView {
             ZStack {
-                // Background color for the entire view
                 Color(red: 194/255, green: 179/255, blue: 140/255)
                     .ignoresSafeArea()
                 
@@ -25,7 +24,7 @@ struct MainView: View {
                             Text("\(patient.firstName) \(patient.lastName)")
                                 .tag(patient)
                         }
-                        .scrollContentBackground(.hidden) // Hides the default list background
+                        .scrollContentBackground(.hidden) 
                         .background(Color(red: 194/255, green: 179/255, blue: 140/255))
                     }
                     
@@ -47,10 +46,9 @@ struct MainView: View {
             .navigationTitle("Patients")
         } detail: {
             if let selectedPatient = viewModel.selectedPatient{
-                
                 ZStack {
-                    Color(red: 245/255, green: 238/255, blue: 220/255)
-                        .ignoresSafeArea()
+//                    Color(red: 245/255, green: 238/255, blue: 220/255)
+//                        .ignoresSafeArea()
                     VStack{
                         HStack{
                             Spacer()
@@ -60,10 +58,20 @@ struct MainView: View {
                                 Image(systemName: "plus")
                             }
                             .padding(.trailing, 20)
-                            
                         }
-                        PatientDetailView(patient: selectedPatient)
+                        TabView{
+                            LastFinishedPeriodView(patient: selectedPatient)
+                                .tabItem{
+                                    Label("Last Finished item", systemImage: "clock.arrow.circlepath")
+                                }
+                            AllPeriodsView(patient: selectedPatient)
+                                .tabItem {
+                                    Label("All Periods", systemImage: "calendar")
+                                }
+                        }
+                        
                     }
+                    
                 }
                 
             } else{
@@ -84,7 +92,7 @@ struct MainView: View {
         }
         .sheet(isPresented: $viewModel.isShowAddNewPatientSheet){
             
-            AddNewPatient(patient: viewModel.newCreatedPatient)
+            AddNewPatient(patient: viewModel.newCreatedPatient, onPatientAddedFun: viewModel.appendPatient)
         }
         .sheet(isPresented: $viewModel.isShowSchedulePeriodSheet){
             

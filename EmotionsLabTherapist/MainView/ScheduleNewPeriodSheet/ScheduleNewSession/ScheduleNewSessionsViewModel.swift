@@ -60,7 +60,7 @@ class ScheduleNewSessionsViewModel: ObservableObject{
     
     func saveSesssions() async {
         self.isSavingPeriodAndSessions = true
-        await period.uploadPeriod()
+        await period.uploadPeriod(patient: patient)
         for dayScheule in daySchedules{
             print("period", period.periodId)
             let sessions = dayScheule.extractSessionObjects(period: period, patient: patient)

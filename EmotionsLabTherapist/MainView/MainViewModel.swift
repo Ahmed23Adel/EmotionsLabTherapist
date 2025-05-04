@@ -20,9 +20,7 @@ class MainViewModel: ObservableObject{
     @Published var isShowSchedulePeriodSheet: Bool = false
     
     init (){
-        print("p1")
         Task{
-            print("p2")
             await downloadAllPatientsBasicInfo()
         }
         
@@ -63,11 +61,17 @@ class MainViewModel: ObservableObject{
             } catch {
                 
             }
-            isLoadingAllPatients = false
+            
         }
+        isLoadingAllPatients = false
     }
     
     func showSchedulePeriod(){
         self.isShowSchedulePeriodSheet = true
+    }
+    
+    func appendPatient(patient: Patient){
+        print("appendPatient")
+        listOfPatients.append(patient)
     }
 }

@@ -6,20 +6,17 @@ struct AddNewPatient: View {
     @StateObject private var viewModel: AddNewPatientViewModel
     @Environment(\.dismiss) private var dismiss
     
-    init(patient: Patient){
-        // _ gives access to the property wrapper itself not the wrapped value
-        _viewModel = StateObject(wrappedValue: AddNewPatientViewModel(patient: patient))
+    init(patient: Patient, onPatientAddedFun: @escaping (Patient) -> Void){
+        _viewModel = StateObject(wrappedValue: AddNewPatientViewModel(patient: patient, onPatientAdded: onPatientAddedFun))
     }
    
     var body: some View {
         ZStack {
-            // Background that fills entire screen
             CustomBakcground()
             
             if viewModel.isSavigPatient {
                 ProgressView("Please wait...")
             } else if !viewModel.isPatientAlreadySaved{
-                // Use VStack to organize the content vertically
                 VStack {
                     Text("Add New Patient")
                         .font(.title)
@@ -43,7 +40,7 @@ struct AddNewPatient: View {
                     }
                     .padding(.horizontal)
                     
-                    Spacer() // Push content to the top
+                    Spacer() 
                 }
                 .alert(isPresented: $viewModel.isShowAlertFailAddPatient){
                     Alert(title: Text(viewModel.alertFailAddPatientErrorTitle),
@@ -80,8 +77,8 @@ struct AddNewPatient: View {
                     }
                     .padding()
                 }
-                
             }
+                
         }
     }
     
@@ -140,5 +137,5 @@ struct CustomBakcground: View{
 }
 
 #Preview {
-    AddNewPatient(patient: Patient())
+    AddNewPatient(patient: Patient(), onPatientAddedFun: {_ in})
 }

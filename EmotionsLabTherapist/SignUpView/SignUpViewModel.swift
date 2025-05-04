@@ -30,23 +30,6 @@ class SignupViewModel: ObservableObject{
             await tempHandleAuthorization()
         }
         return
-        // TODO uncomment when you have paid apple account
-//        switch result {
-//        case .success(let auth):
-//            if let appleIDCredential = auth.credential as? ASAuthorizationAppleIDCredential {
-//                let userID = appleIDCredential.user
-//                let fullName = appleIDCredential.fullName
-//                let email = appleIDCredential.email
-//
-//                print("Apple ID: \(userID)")
-//                print("Full name: \(fullName?.givenName ?? "") \(fullName?.familyName ?? "")")
-//                print("Email: \(email ?? "")")
-//            }
-//        case .failure(let error):
-//            signUpErrorMsg = "Sign in failed \(error), please try again later"
-//            signUpErrorTitle = "Sign up failed"
-//            isSignUpFailed = true
-//        }
     }
 
     func tempHandleAuthorization() async {

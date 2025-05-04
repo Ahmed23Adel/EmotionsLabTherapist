@@ -75,7 +75,8 @@ class Patient: ObservableObject, Identifiable, Hashable{
         do {
             
             let data = try await apiCaller.callApiWithToken(endpoint: "patients",
-                                       method: .post, token: token,
+                                       method: .post,
+                                       token: token,
                                        body: [
                                         "therapist_id": therapistId,
                                         "first_name": firstName,
@@ -88,6 +89,7 @@ class Patient: ObservableObject, Identifiable, Hashable{
             self.username = response.username
             funcSucceed(response.username)
         } catch {
+            print("error", error, "token", token)
             funcShowError()
         }
         
