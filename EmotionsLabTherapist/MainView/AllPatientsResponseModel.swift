@@ -15,6 +15,7 @@ struct PatientBasicInfo: Codable {
     let createdAt: String
     let firstName: String
     let lastName: String
+    let hasUnfinishedSessionYesterday: Bool
 
     enum CodingKeys: String, CodingKey {
         case username
@@ -24,5 +25,6 @@ struct PatientBasicInfo: Codable {
         case createdAt = "created_at"
         case firstName = "first_name"
         case lastName = "last_name"
+        case hasUnfinishedSessionYesterday = "has_unfinished_session_yesterday"
     }
 }

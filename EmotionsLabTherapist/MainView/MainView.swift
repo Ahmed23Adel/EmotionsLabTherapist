@@ -21,8 +21,17 @@ struct MainView: View {
                         ProgressView("Please wait...")
                     } else{
                         List(viewModel.listOfPatients, id: \.patientId, selection: $viewModel.selectedPatient) { patient in
-                            Text("\(patient.firstName) \(patient.lastName)")
-                                .tag(patient)
+                            HStack{
+                                Text("\(patient.firstName) \(patient.lastName)")
+                                    
+                                Spacer()
+                                if patient.hasUnfinishedSessionYesterday{
+                                    Circle()
+                                        .fill(Color.red)
+                                        .frame(width: 8, height: 8)
+                                }
+                            }
+                            .tag(patient)
                         }
                         .scrollContentBackground(.hidden) 
                         .background(Color(red: 194/255, green: 179/255, blue: 140/255))
@@ -47,8 +56,6 @@ struct MainView: View {
         } detail: {
             if let selectedPatient = viewModel.selectedPatient{
                 ZStack {
-//                    Color(red: 245/255, green: 238/255, blue: 220/255)
-//                        .ignoresSafeArea()
                     VStack{
                         HStack{
                             Spacer()
@@ -73,6 +80,7 @@ struct MainView: View {
                     }
                     
                 }
+                .id(selectedPatient.patientId)
                 
             } else{
                 Color(red: 245/255, green: 238/255, blue: 220/255)

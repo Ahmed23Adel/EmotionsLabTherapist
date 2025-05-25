@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-class Patient: ObservableObject, Identifiable, Hashable{
+class Patient: ObservableObject, Identifiable, Hashable, Equatable{
     nonisolated let id = UUID()
     
     private(set) var firstName: String = ""
@@ -16,6 +16,7 @@ class Patient: ObservableObject, Identifiable, Hashable{
     private(set) var username: String = ""
     private(set) var patientId: String = ""
     private(set) var coins: Int = 0
+    private(set) var hasUnfinishedSessionYesterday: Bool = false
     
     private let MIN_NAME_LENGTH = 2
     private let apiCaller = ApiCaller()
@@ -49,6 +50,10 @@ class Patient: ObservableObject, Identifiable, Hashable{
         try validateName(name)
         self.lastName = name
         
+    }
+    
+    func setHasUnfinishedSessionYesterday(hasUnfinishedSessionYesterday: Bool){
+        self.hasUnfinishedSessionYesterday = hasUnfinishedSessionYesterday
     }
     
     

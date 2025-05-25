@@ -57,6 +57,7 @@ class MainViewModel: ObservableObject{
                 try patient.setLastName(patientInfo.lastName)
                 patient.setUsername(patientInfo.username)
                 patient.setPatientId(patientInfo.patientId)
+                patient.setHasUnfinishedSessionYesterday(hasUnfinishedSessionYesterday: patientInfo.hasUnfinishedSessionYesterday)
                 listOfPatients.append(patient)
             } catch {
                 
